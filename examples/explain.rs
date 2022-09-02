@@ -17,9 +17,7 @@ fn list_mail(mail: MailEntry) {
 fn process_maildirs(maildirs: impl IntoIterator<Item = Maildir>) -> Result<(), io::Error> {
     maildirs.into_iter().try_for_each(|mdir| {
         mdir.list_new()
-            .chain(mdir.list_cur())
-            .map(|r| r.map(list_mail))
-            .collect::<Result<_, _>>()
+            .chain(mdir.list_cur()).try_for_each(|r| r.map(list_mail))
     })
 }
 

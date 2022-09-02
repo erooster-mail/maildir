@@ -96,7 +96,7 @@ fn maildir_list() {
             first.headers().unwrap().get_first_value("Subject"),
             Some(String::from("test"))
         );
-        assert_eq!(first.is_seen(), false);
+        assert!(!first.is_seen());
         let second = iter.next();
         assert!(second.is_none());
 
@@ -107,7 +107,7 @@ fn maildir_list() {
             first.parsed().unwrap().headers.get_first_value("Subject"),
             Some(String::from("test"))
         );
-        assert_eq!(first.is_seen(), true);
+        assert!(first.is_seen());
         let second = iter.next();
         assert!(second.is_none());
     })
@@ -138,42 +138,27 @@ fn maildir_list_subdirs() {
 #[test]
 fn maildir_find() {
     with_maildir(MAILDIR_NAME, |maildir| {
-        assert_eq!(
-            maildir
-                .find("1463941010.5f7fa6dd4922c183dc457d033deee9d7")
-                .is_some(),
-            true
-        );
-        assert_eq!(
-            maildir
-                .find("1463868505.38518452d49213cb409aa1db32f53184")
-                .is_some(),
-            true
-        );
+        assert!(maildir
+            .find("1463941010.5f7fa6dd4922c183dc457d033deee9d7")
+            .is_some());
+        assert!(maildir
+            .find("1463868505.38518452d49213cb409aa1db32f53184")
+            .is_some());
     })
 }
 
 #[test]
 fn check_delete() {
     with_maildir(MAILDIR_NAME, |maildir| {
-        assert_eq!(
-            maildir
-                .find("1463941010.5f7fa6dd4922c183dc457d033deee9d7")
-                .is_some(),
-            true
-        );
-        assert_eq!(
-            maildir
-                .delete("1463941010.5f7fa6dd4922c183dc457d033deee9d7")
-                .is_ok(),
-            true
-        );
-        assert_eq!(
-            maildir
-                .find("1463941010.5f7fa6dd4922c183dc457d033deee9d7")
-                .is_some(),
-            false
-        );
+        assert!(maildir
+            .find("1463941010.5f7fa6dd4922c183dc457d033deee9d7")
+            .is_some());
+        assert!(maildir
+            .delete("1463941010.5f7fa6dd4922c183dc457d033deee9d7")
+            .is_ok());
+        assert!(maildir
+            .find("1463941010.5f7fa6dd4922c183dc457d033deee9d7")
+            .is_none());
     })
 }
 
@@ -216,12 +201,9 @@ fn check_copy_and_move() {
 #[test]
 fn mark_read() {
     with_maildir(MAILDIR_NAME, |maildir| {
-        assert_eq!(
-            maildir
-                .move_new_to_cur("1463941010.5f7fa6dd4922c183dc457d033deee9d7")
-                .unwrap(),
-            ()
-        );
+        assert!(maildir
+            .move_new_to_cur("1463941010.5f7fa6dd4922c183dc457d033deee9d7")
+            .is_ok());
     });
 }
 

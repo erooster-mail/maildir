@@ -1,6 +1,3 @@
-#[cfg(feature = "mmap")]
-extern crate memmap2;
-
 use std::error;
 use std::fmt;
 use std::fs;
@@ -75,10 +72,7 @@ enum MailData {
 
 impl MailData {
     fn is_none(&self) -> bool {
-        match self {
-            MailData::None => true,
-            _ => false,
-        }
+        matches!(self, MailData::None)
     }
 }
 
@@ -148,9 +142,8 @@ impl MailEntry {
         let received = headers.get_first_value("Received");
         match received {
             Some(v) => v
-                .rsplit(';')
-                .nth(0)
-                .ok_or_else(|| MailEntryError::DateError("Unable to split Received header"))
+                .rsplit(';').next()
+                .ok_or(MailEntryError::DateError("Unable to split Received header"))
                 .and_then(|ts| dateparse(ts).map_err(MailEntryError::from)),
             None => Err("No Received header found")?,
         }
@@ -676,7 +669,7 @@ impl Maildir {
             ts += time::Duration::from_millis(10);
         }
 
-        let mut file = std::fs::File::create(tmppath.to_owned())?;
+        let mut file = std::fs::File::create(&tmppath)?;
         file.write_all(data)?;
         file.sync_all()?;
 
