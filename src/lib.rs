@@ -567,7 +567,7 @@ impl Maildir {
             let merged = String::from(old_flags) + flags;
             Self::normalize_flags(&merged)
         };
-        self.update_flags(id, &flag_merge)
+        self.update_flags(id, flag_merge)
     }
 
     /// Removes the given flags to the message with the given id in the maildir.
@@ -578,7 +578,7 @@ impl Maildir {
     pub fn remove_flags(&self, id: &str, flags: &str) -> std::io::Result<()> {
         let flag_strip =
             |old_flags: &str| old_flags.chars().filter(|c| !flags.contains(*c)).collect();
-        self.update_flags(id, &flag_strip)
+        self.update_flags(id, flag_strip)
     }
 
     /// Deletes the message with the given id in the maildir.
